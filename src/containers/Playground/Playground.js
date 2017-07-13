@@ -8,9 +8,15 @@ export default class Playground extends Component {
   constructor(props) {
     super(props);
 
-    this.state =  {
-      playground: null,
-      bombsCellsLookup: this.generateBombs(),
+    this.state = this.initialState();
+  }
+
+  //TODO make more idiomatic react?! (use lifecycle methods)
+  initialState() {
+    const bombs = this.generateBombs();
+    return {
+      playground: buildPlayground(16, 30, bombs),
+      bombsCellsLookup: bombs,
       revealedCellsLookup: {},
       markedCellsLookup: {},
       isGameOver: false,
@@ -20,9 +26,9 @@ export default class Playground extends Component {
     }
   }
 
-  componentDidMount() {
-    const {bombsCellsLookup} = this.state;
-    this.setState({playground: buildPlayground(16, 30, bombsCellsLookup)});
+  resetGame = () => {
+    clearInterval(this.state.intervalId);
+    this.setState(this.initialState());
   }
 
   generateBombs() {
@@ -115,6 +121,7 @@ export default class Playground extends Component {
           <Helmet title="Minesweeper" />
           <h1>{bombsCount}</h1>
           <h1>{timer}</h1>
+          <button onClick={this.resetGame}>Reset Game</button>
           {mainGrid}
         </div>);
   }
