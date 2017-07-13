@@ -14,6 +14,7 @@ export default class Playground extends Component {
       revealedCellsLookup: {},
       markedCellsLookup: {},
       isGameOver: false,
+      bombsCount: 99,
     }
   }
 
@@ -45,10 +46,10 @@ export default class Playground extends Component {
 
   markCell(event, row, col) {
     event.preventDefault();
-    const {revealedCellsLookup, markedCellsLookup} = this.state;
+    const {revealedCellsLookup, markedCellsLookup, bombsCount} = this.state;
     if (!revealedCellsLookup[`${row}_${col}`]) {
       markedCellsLookup[`${row}_${col}`] = markedCellsLookup[`${row}_${col}`] ? null : `${row}_${col}`;
-      this.setState({markedCellsLookup});
+      this.setState({bombsCount: bombsCount-1, markedCellsLookup: markedCellsLookup});
     }
   }
 
@@ -58,7 +59,7 @@ export default class Playground extends Component {
   }
 
   render() {
-    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver} = this.state;
+    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount} = this.state;
 
     //TODO work on this part of code!
     const rows = [];
@@ -84,7 +85,7 @@ export default class Playground extends Component {
     return (
         <div>
           <Helmet title="Minesweeper" />
-          <h1>PLAYGROUND!</h1>
+          <h1>{bombsCount}</h1>
           {mainGrid}
         </div>);
   }
