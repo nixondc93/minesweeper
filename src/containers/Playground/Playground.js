@@ -39,14 +39,22 @@ export default class Playground extends Component {
 
   checkGameStatus(row, col, hasBomb) {
     const {playground, revealedCellsLookup, markedCellsLookup, timer} = this.state;
+    let updatedRevealedCells;
+
     if (hasBomb) {
       this.gameOver();
     } else {
-      this.setState({revealedCellsLookup: expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup)});
+      updatedRevealedCells = expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
+
+      if (Object.keys(updatedRevealedCells).length === 30*16 - 99 ) {
+        this.gameOver();
+      } else {
+        this.setState({revealedCellsLookup: updatedRevealedCells});
+      }
     }
 
     if (timer === 0) {
-      this.setState({intervalId: this.startTimer()});
+      this.setState({intervalId: this.startTimer(), timer: 1});
     }
   }
 
