@@ -15,6 +15,7 @@ export default class Playground extends Component {
       markedCellsLookup: {},
       isGameOver: false,
       bombsCount: 99,
+      timer: 0,
     }
   }
 
@@ -36,11 +37,24 @@ export default class Playground extends Component {
   }
 
   checkGameStatus(row, col, hasBomb) {
-    const {playground, revealedCellsLookup, markedCellsLookup} = this.state;
+    const {playground, revealedCellsLookup, markedCellsLookup, timer} = this.state;
     if (hasBomb) {
       this.gameOver();
     } else {
       this.setState({revealedCellsLookup: expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup)});
+    }
+
+    if (timer === 0) this.startTimer();
+  }
+
+  startTimer() {
+    setInterval(this.countUp, 1000);
+  }
+
+  countUp = () => {
+    const {timer, isGameOver} = this.state;
+    if (timer < 1000 && !isGameOver) {
+      this.setState({timer: timer + 1});
     }
   }
 
@@ -59,7 +73,7 @@ export default class Playground extends Component {
   }
 
   render() {
-    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount} = this.state;
+    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer} = this.state;
 
     //TODO work on this part of code!
     const rows = [];
@@ -86,6 +100,7 @@ export default class Playground extends Component {
         <div>
           <Helmet title="Minesweeper" />
           <h1>{bombsCount}</h1>
+          <h1>{timer}</h1>
           {mainGrid}
         </div>);
   }
