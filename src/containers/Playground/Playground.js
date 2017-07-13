@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
 import {Cell} from '../../components';
-import {buildPlayground} from 'utils/game';
+import {buildPlayground, expandArea} from 'utils/game';
 
 export default class Playground extends Component {
   constructor(props) {
@@ -12,17 +12,16 @@ export default class Playground extends Component {
       playground: null,
       bombsCellsLookup: this.generateBombs(),
       revealedCellsLookup: {},
+      markedCellsLookup: {},
       isGameOver: false,
     }
   }
 
   componentDidMount() {
     const {bombsCellsLookup} = this.state;
-    buildPlayground(16, 30, bombsCellsLookup);
     this.setState({playground: buildPlayground(16, 30, bombsCellsLookup)});
   }
 
-  //TODO MAKE EXACT NUMBER OF BOMBS
   generateBombs() {
     let bombs = {};
     let row, col;
@@ -35,38 +34,49 @@ export default class Playground extends Component {
     return bombs;
   }
 
-  expandArea(hasBomb) {
+  checkGameStatus(row, col, hasBomb) {
+    const {playground, revealedCellsLookup, markedCellsLookup} = this.state;
     if (hasBomb) {
       this.gameOver();
     } else {
+      this.setState({revealedCellsLookup: expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup)});
+    }
+  }
 
+  markCell(event, row, col) {
+    event.preventDefault();
+    const {revealedCellsLookup, markedCellsLookup} = this.state;
+    if (!revealedCellsLookup[`${row}_${col}`]) {
+      markedCellsLookup[`${row}_${col}`] = markedCellsLookup[`${row}_${col}`] ? null : `${row}_${col}`;
+      this.setState({markedCellsLookup});
     }
   }
 
   gameOver() {
     this.setState({isGameOver: true});
+    console.log('GAME OVER!');
   }
 
   render() {
-    const {bombsCellsLookup, playground, isGameOver} = this.state;
+    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver} = this.state;
+
     //TODO work on this part of code!
-    // console.log(bombsCellsLookup);
-    // console.log(Object.keys(bombsCellsLookup).length);
-    console.log(this.state.playground);
     const rows = [];
     for (let row = 0; row < 16; row++) {
-      // const currRow = [];
       for (let col = 0; col < 30; col++) {
         rows.push(<Cell
-                  key={`${row}_${col}`} id={`${row}_${col}`}
-                  onPlayerClick={!isGameOver && this.expandArea.bind(this)}
+                  key={`${row}_${col}`}
+                  row={row}
+                  col={col}
+                  onPlayerClick={this.checkGameStatus.bind(this)}
+                  onPlayerMarkCell={this.markCell.bind(this)}
                   hasBomb={bombsCellsLookup[`${row}_${col}`]}
-                  isOpenCell={playground && playground[row][col] === 0}
+                  bombsAround={playground && playground[row][col] > 0 && playground[row][col] -1}
+                  shouldRevealCell={revealedCellsLookup[`${row}_${col}`]}
+                  shouldMarkCell={markedCellsLookup[`${row}_${col}`]}
                   isGameOver={isGameOver}
                   />);
       }
-      // rows.push(<div key={`${row}`}>{currRow}</div>);
-      // rows.push(<br />);
     }
     //////////////////////////
 

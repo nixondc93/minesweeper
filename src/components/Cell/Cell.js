@@ -11,20 +11,54 @@ const cellStyles = {
 
   bomb: {
     backgroundColor: 'red',
+  },
+
+  revealedNumber: {
+    backgroundColor: 'green',
+  },
+
+  revealedEmpty: {
+    backgroundColor: 'yellow',
+  },
+
+  markedCell: {
+    backgroundColor: 'brown',
   }
 };
 
+//TODO make it functional component
 export default class Cell extends Component {
   static propTypes = {
     hasBomb: PropTypes.string,
-    isOpenCell: PropTypes.bool,
-    onPlayerClick: PropTypes.func.isRequired,
-    isGameOver: PropTypes.bool,
+    shouldRevealCell: PropTypes.string,
+    shouldMarkCell: PropTypes.string,
+    row: PropTypes.number.isRequired,
+    col: PropTypes.number.isRequired,
+    onPlayerClick: PropTypes.func,
+    onPlayerMarkCell: PropTypes.func,
+    isGameOver: PropTypes.bool.isRequired,
+    bombsAround: PropTypes.number,
   }
 
   render() {
-    const {hasBomb, onPlayerClick, isGameOver} = this.props;
-    const styles = hasBomb ? {...cellStyles.blank, ...cellStyles.bomb} : cellStyles.blank;
-    return (<div style={styles} onClick={() => onPlayerClick(hasBomb) }></div>);
+    const {hasBomb, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, bombsAround, shouldMarkCell} = this.props;
+    let styles = isGameOver && hasBomb ? {...cellStyles.blank, ...cellStyles.bomb} : cellStyles.blank;
+    if (shouldRevealCell) {
+      if (bombsAround > 0) {
+        styles = {...styles, ...cellStyles.revealedNumber};
+      } else {
+        styles = {...styles, ...cellStyles.revealedEmpty};
+      }
+    }
+    if (shouldMarkCell) {
+      styles = {...styles, ...cellStyles.markedCell};
+    }
+
+    return (<div
+            style={styles}
+            onClick={isGameOver ? null : () => onPlayerClick(row, col, hasBomb) }
+            onContextMenu={isGameOver ? null : (event) => { onPlayerMarkCell(event, row, col)}}>
+              {shouldRevealCell && this.props.bombsAround > 0 && this.props.bombsAround}
+            </div>);
   }
 }
