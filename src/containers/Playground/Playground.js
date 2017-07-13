@@ -16,6 +16,7 @@ export default class Playground extends Component {
       isGameOver: false,
       bombsCount: 99,
       timer: 0,
+      intervalId: null,
     }
   }
 
@@ -44,17 +45,22 @@ export default class Playground extends Component {
       this.setState({revealedCellsLookup: expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup)});
     }
 
-    if (timer === 0) this.startTimer();
+    if (timer === 0) {
+      this.setState({intervalId: this.startTimer()});
+    }
   }
 
   startTimer() {
-    setInterval(this.countUp, 1000);
+    return setInterval(this.countUp, 1000);
   }
 
   countUp = () => {
-    const {timer, isGameOver} = this.state;
+    const {timer, isGameOver, intervalId} = this.state;
+    console.log('COUNTING UP!');
     if (timer < 1000 && !isGameOver) {
       this.setState({timer: timer + 1});
+    } else {
+      clearInterval(intervalId);
     }
   }
 
