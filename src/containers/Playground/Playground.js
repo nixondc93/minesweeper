@@ -1,7 +1,7 @@
 /*eslint-disable*/
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
-import {Cell} from '../../components';
+import {Cell, GameMenu} from '../../components';
 import {buildPlayground, expandArea} from 'utils/game';
 
 export default class Playground extends Component {
@@ -23,6 +23,7 @@ export default class Playground extends Component {
       bombsCount: 99,
       timer: 0,
       intervalId: null,
+      showGameMenu: false,
     }
   }
 
@@ -92,8 +93,12 @@ export default class Playground extends Component {
     console.log('GAME OVER!');
   }
 
+  openGameMenu = () => {
+    this.setState({showGameMenu: true});
+  }
+
   render() {
-    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer} = this.state;
+    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer, showGameMenu} = this.state;
 
     //TODO work on this part of code!
     const rows = [];
@@ -119,9 +124,11 @@ export default class Playground extends Component {
     return (
         <div>
           <Helmet title="Minesweeper" />
-          <h1>{bombsCount}</h1>
-          <h1>{timer}</h1>
+          <h1>Bombs: {bombsCount}</h1>
+          <h1>Timer: {timer}</h1>
+          <div><a className="pointer" onClick={this.openGameMenu}>Game</a></div>
           <button onClick={this.resetGame}>Reset Game</button>
+          {showGameMenu && <GameMenu />}
           {mainGrid}
         </div>);
   }
