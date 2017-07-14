@@ -3,7 +3,7 @@ import React, {PropTypes} from 'react';
 import {getGameAttributesByDifficulty} from 'utils/game';
 
 export default function GameMenu(props) {
-  const {handleApplySettings, handleExitMenu} = props;
+  const {handleApplySettings, handleExitMenu, gameAttributes} = props;
 
   const beginnerAttributes = getGameAttributesByDifficulty('beginner');
   const intermediateAttributes = getGameAttributesByDifficulty('intermediate');
@@ -13,7 +13,7 @@ export default function GameMenu(props) {
     e.preventDefault();
     const form = document.getElementById('game-menu');
     const difficulty = form.elements['difficulty'].value;
-    console.log(form.elements);
+
     if (difficulty === 'custom') {
       handleApplySettings(getGameAttributesByDifficulty({
         height: form.elements["custom-height"].value,
@@ -47,7 +47,7 @@ export default function GameMenu(props) {
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="beginner"/>
+            <input name="difficulty" className="col-xs-3" type="radio" value="beginner" defaultChecked={gameAttributes.mines === beginnerAttributes.mines} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Beginner</strong>
           </div>
           <div className="row col-xs-7 padding0">
@@ -59,7 +59,7 @@ export default function GameMenu(props) {
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="intermediate" />
+            <input name="difficulty" className="col-xs-3" type="radio" value="intermediate" defaultChecked={gameAttributes.mines === intermediateAttributes.mines} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Intermediate</strong>
           </div>
           <div className="row col-xs-7 padding0">
@@ -71,7 +71,7 @@ export default function GameMenu(props) {
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="expert" />
+            <input name="difficulty" className="col-xs-3" type="radio" value="expert" defaultChecked={gameAttributes.mines === expertAttributes.mines} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Expert</strong>
           </div>
           <div className="row col-xs-7 padding0">
@@ -83,7 +83,7 @@ export default function GameMenu(props) {
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="custom"/>
+            <input name="difficulty" className="col-xs-3" type="radio" value="custom" />
             <strong className="col-xs-9 padding0 fs-small ta-left">Custom</strong>
           </div>
           <div className="row col-xs-7 padding0">
@@ -105,4 +105,5 @@ export default function GameMenu(props) {
 GameMenu.propTypes = {
   handleApplySettings: PropTypes.func.isRequired,
   handleExitMenu: PropTypes.func.isRequired,
+  gameAttributes: PropTypes.object.isRequired,
 }

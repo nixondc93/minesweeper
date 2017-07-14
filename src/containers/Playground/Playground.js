@@ -58,7 +58,7 @@ export default class Playground extends Component {
     } else {
       updatedRevealedCells = expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
 
-      if (Object.keys(updatedRevealedCells).length === width*height - mines ) {
+      if (Object.keys(updatedRevealedCells).length === width*height - mines && Object.keys(markedCellsLookup).length === mines) {
         this.gameOver(true);
       } else {
         this.setState({revealedCellsLookup: updatedRevealedCells});
@@ -105,8 +105,10 @@ export default class Playground extends Component {
   gameOver(isVictory = false) {
     this.setState({isGameOver: true});
     if (isVictory) {
+      alert('VICTORY!');
       console.log('VICTORY!!');
     } else {
+      alert('YOU LOST!');
       console.log('GAME OVER!');
     }
   }
@@ -126,8 +128,6 @@ export default class Playground extends Component {
 
   render() {
     const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer, showGameMenu} = this.state;
-
-    console.log(this.gameAttributes);
 
     //TODO work on this part of code!
     const rows = [];
@@ -153,7 +153,7 @@ export default class Playground extends Component {
     const mainGrid = (
         <div className="main-grid" style={{width: `${gridWidth}px`}}>
           {rows}
-          {showGameMenu && <GameMenu handleApplySettings={this.handleApplySettings.bind(this)} handleExitMenu={this.closeGameMenu.bind(this)}/>}
+          {showGameMenu && <GameMenu handleApplySettings={this.handleApplySettings.bind(this)} handleExitMenu={this.closeGameMenu.bind(this)} gameAttributes={this.gameAttributes}/>}
         </div>);
 
     return (
