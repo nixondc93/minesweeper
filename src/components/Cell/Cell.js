@@ -1,39 +1,48 @@
 /*eslint-disable*/
 import React, { PropTypes } from 'react';
+import {getBackgroundByNumber} from 'utils/game';
 
 const cellStyles = {
   blank: {
-    border: '1px solid black',
     width: '15px',
     height: '15px',
-    float: 'left'
+    float: 'left',
+    background: 'url(sprite100.gif) 0 52px',
   },
 
   bomb: {
-    backgroundColor: 'red',
+    background: 'url(sprite100.gif) -64px 52px',
   },
 
-  revealedNumber: {
-    backgroundColor: 'green',
+  pressedMine: {
+    background: 'url(sprite100.gif) -33px 52px',
   },
 
   revealedEmpty: {
-    backgroundColor: 'yellow',
+    background: 'url(sprite100.gif) 0 68px',
   },
 
   markedCell: {
-    backgroundColor: 'brown',
+    background: 'url(sprite100.gif) -16px 52px',
   }
 };
 
 export default function Cell(props) {
 
-  const {hasBomb, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, bombsAround, shouldMarkCell} = props;
+  const {hasBomb, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, bombsAround, shouldMarkCell, hasMineAndPressed} = props;
+  let styles = cellStyles.blank;
 
-  let styles = isGameOver && hasBomb ? {...cellStyles.blank, ...cellStyles.bomb} : cellStyles.blank;
+  if (isGameOver && hasBomb) {
+    if (hasMineAndPressed) {
+      styles = {...cellStyles.blank, ...cellStyles.pressedMine};
+    } else {
+      styles = {...cellStyles.blank, ...cellStyles.bomb};
+    }
+  }
+
   if (shouldRevealCell) {
     if (bombsAround > 0) {
-      styles = {...styles, ...cellStyles.revealedNumber};
+      styles = {...styles, ...getBackgroundByNumber(bombsAround)};
     } else {
       styles = {...styles, ...cellStyles.revealedEmpty};
     }
@@ -46,7 +55,6 @@ export default function Cell(props) {
           style={styles}
           onClick={isGameOver ? null : () => onPlayerClick(row, col, hasBomb) }
           onContextMenu={isGameOver ? null : (event) => { onPlayerMarkCell(event, row, col)}}>
-          {shouldRevealCell && bombsAround > 0 && bombsAround}
           </div>);
 }
 
@@ -54,6 +62,7 @@ export default function Cell(props) {
     row: PropTypes.number.isRequired,
     col: PropTypes.number.isRequired,
     hasBomb: PropTypes.string,
+    hasMineAndPressed: PropTypes.bool.isRequired,
     shouldRevealCell: PropTypes.string,
     shouldMarkCell: PropTypes.string,
     onPlayerClick: PropTypes.func,

@@ -1,4 +1,25 @@
 /*eslint-disable*/
+export function getBackgroundByNumber(mines) {
+  switch(mines) {
+    case 1:
+      return {background: 'url(sprite100.gif) -16px 68px'};
+    case 2:
+      return {background: 'url(sprite100.gif) -32px 68px'};
+    case 3:
+      return {background: 'url(sprite100.gif) -48px 68px'};
+    case 4:
+      return {background: 'url(sprite100.gif) -64px 68px'};
+    case 5:
+      return {background: 'url(sprite100.gif) -80px 68px'};
+    case 6:
+      return {background: 'url(sprite100.gif) -96px 68px'};
+    case 7:
+      return {background: 'url(sprite100.gif) -112px 68px'};
+    default:
+      return {background: 'url(sprite100.gif) -128px 68px'};
+  }
+}
+
 export function getGameAttributesByDifficulty(difficulty) {
   switch(difficulty) {
     case 'beginner':

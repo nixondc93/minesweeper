@@ -23,6 +23,7 @@ export default class Playground extends Component {
       revealedCellsLookup: {},
       markedCellsLookup: {},
       isGameOver: false,
+      pressedMineCoords: {row: null, col: null},
       bombsCount: mines,
       timer: 0,
       intervalId: null,
@@ -53,7 +54,7 @@ export default class Playground extends Component {
     let updatedRevealedCells;
 
     if (hasBomb) {
-      this.gameOver();
+      this.gameOver(false, row, col);
     } else {
       updatedRevealedCells = expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
 
@@ -110,8 +111,8 @@ export default class Playground extends Component {
     }
   }
 
-  gameOver(isVictory = false) {
-    this.setState({isGameOver: true});
+  gameOver(isVictory = false, row = null, col = null) {
+    this.setState({isGameOver: true, pressedMineCoords: {row: row, col: col}});
     if (isVictory) {
       alert('VICTORY!');
       console.log('VICTORY!!');
@@ -136,7 +137,7 @@ export default class Playground extends Component {
   }
 
   render() {
-    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer, showGameMenu} = this.state;
+    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer, showGameMenu, pressedMineCoords} = this.state;
 
     //TODO work on this part of code!
     const rows = [];
@@ -150,6 +151,7 @@ export default class Playground extends Component {
                   onPlayerMarkCell={this.markCell.bind(this)}
                   hasBomb={bombsCellsLookup[`${row}_${col}`]}
                   bombsAround={playground && playground[row][col] > 0 && playground[row][col] -1}
+                  hasMineAndPressed={pressedMineCoords.row === row && pressedMineCoords.col === col}
                   shouldRevealCell={revealedCellsLookup[`${row}_${col}`]}
                   shouldMarkCell={markedCellsLookup[`${row}_${col}`]}
                   isGameOver={isGameOver}
@@ -167,11 +169,14 @@ export default class Playground extends Component {
 
     return (
         <div className="minesweeper-body">
-          <Helmet title="Minesweeper" />
-          <h1>Bombs: {bombsCount}</h1>
-          <h1>Timer: {timer}</h1>
+          <Helmet title="Minesweeper Online" />
+          <div className="row">
+            <h1 className="col-xs-6">Mines: {bombsCount}</h1>
+            <h1 className="col-xs-6">Timer: {timer}</h1>
+          </div>
           <div><a className="pointer" onClick={this.openGameMenu}>Game</a></div>
-          <button onClick={this.resetGame}>Reset Game</button>
+          <hr />
+          <div className="reset-button pointer" onClick={this.resetGame}></div>
           {mainGrid}
         </div>);
   }
