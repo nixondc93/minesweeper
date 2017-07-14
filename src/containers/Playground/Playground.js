@@ -50,7 +50,6 @@ export default class Playground extends Component {
 
   checkGameStatus(row, col, hasBomb) {
     const {playground, revealedCellsLookup, markedCellsLookup, timer} = this.state;
-    const {height, width, mines} = this.gameAttributes;
     let updatedRevealedCells;
 
     if (hasBomb) {
@@ -58,7 +57,7 @@ export default class Playground extends Component {
     } else {
       updatedRevealedCells = expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
 
-      if (Object.keys(updatedRevealedCells).length === width*height - mines && Object.keys(markedCellsLookup).length === mines) {
+      if (this.checkIfWon(updatedRevealedCells, markedCellsLookup)) {
         this.gameOver(true);
       } else {
         this.setState({revealedCellsLookup: updatedRevealedCells});
@@ -68,6 +67,11 @@ export default class Playground extends Component {
     if (timer === 0) {
       this.setState({intervalId: this.startTimer(), timer: 1});
     }
+  }
+
+  checkIfWon = (revealedCellsLookup, markedCellsLookup) => {
+    const {height, width, mines} = this.gameAttributes;
+    return Object.keys(revealedCellsLookup).length === width*height - mines && Object.keys(markedCellsLookup).length === mines;
   }
 
   startTimer() {
@@ -98,7 +102,11 @@ export default class Playground extends Component {
         bombsCount--;
       }
 
-      this.setState({bombsCount, markedCellsLookup});
+      if (this.checkIfWon(revealedCellsLookup, markedCellsLookup)) {
+        this.gameOver(true);
+      } else {
+        this.setState({bombsCount, markedCellsLookup});
+      }
     }
   }
 
