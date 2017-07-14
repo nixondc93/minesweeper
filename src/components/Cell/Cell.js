@@ -36,5 +36,5 @@ Cell.propTypes = {
   onPlayerClick: PropTypes.func,
   onPlayerMarkCell: PropTypes.func,
   isGameOver: PropTypes.bool.isRequired,
-  minesAround: PropTypes.number,
+  minesAround: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
 };
