@@ -1,4 +1,3 @@
-/*eslint-disable*/
 import React, {PropTypes} from 'react';
 import {getGameAttributesByDifficulty} from 'utils/game';
 
@@ -15,24 +14,24 @@ export default function GameMenu(props) {
   const isExpertSelected = gameAttributes.mines === defaultExpertAttributes.mines;
   const isCustomSelected = !isBeginnerSelected && !isIntermediateSelected && !isExpertSelected;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     const form = document.getElementById('game-menu');
-    const difficulty = form.elements['difficulty'].value;
+    const difficulty = form.elements.difficulty.value;
 
     if (difficulty === 'custom') {
-      if (parseInt(form.elements["custom-height"].value) && parseInt(form.elements["custom-width"].value) &&  parseInt(form.elements["custom-mines"].value)) {
-        if (parseInt(form.elements["custom-height"].value) * parseInt(form.elements["custom-width"].value) <= parseInt(form.elements["custom-mines"].value)) {
+      if (parseInt(form.elements['custom-height'].value, 10) && parseInt(form.elements['custom-width'].value, 10) && parseInt(form.elements['custom-mines'].value, 10)) {
+        if (parseInt(form.elements['custom-height'].value, 10) * parseInt(form.elements['custom-width'].value, 10) <= parseInt(form.elements['custom-mines'].value, 10)) {
           handleApplySettings({
-            height: parseInt(form.elements["custom-height"].value),
-            width: parseInt(form.elements["custom-width"].value),
-            mines: (parseInt(form.elements["custom-height"].value) * parseInt(form.elements["custom-width"].value) - 1),
+            height: parseInt(form.elements['custom-height'].value, 10),
+            width: parseInt(form.elements['custom-width'].value, 10),
+            mines: (parseInt(form.elements['custom-height'].value, 10) * parseInt(form.elements['custom-width'].value, 10) - 1),
           });
         } else {
           handleApplySettings({
-            height: parseInt(form.elements["custom-height"].value),
-            width: parseInt(form.elements["custom-width"].value),
-            mines: parseInt(form.elements["custom-mines"].value),
+            height: parseInt(form.elements['custom-height'].value, 10),
+            width: parseInt(form.elements['custom-width'].value, 10),
+            mines: parseInt(form.elements['custom-mines'].value, 10),
           });
         }
       } else {
@@ -41,11 +40,11 @@ export default function GameMenu(props) {
     } else {
       handleApplySettings(getGameAttributesByDifficulty(difficulty));
     }
-  }
+  };
 
   return (
     <div className="game-menu container">
-      <form id="game-menu" onSubmit={(e) => handleSubmit(e)}>
+      <form id="game-menu" onSubmit={(event) => handleSubmit(event)}>
       <div className="row menu-header">
         <div className="col-xs-6"><span className="pull-left">Game</span></div>
         <div className="col-xs-6 pt2" onClick={() => handleExitMenu()}><span className="fa fa-times pull-right pointer"></span></div>
@@ -124,4 +123,4 @@ GameMenu.propTypes = {
   handleApplySettings: PropTypes.func.isRequired,
   handleExitMenu: PropTypes.func.isRequired,
   gameAttributes: PropTypes.object.isRequired,
-}
+};

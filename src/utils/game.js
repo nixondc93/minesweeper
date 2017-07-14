@@ -1,27 +1,5 @@
-/*eslint-disable*/
-export function getBackgroundByNumber(mines) {
-  switch(mines) {
-    case 1:
-      return {background: 'url(sprite100.gif) -16px 68px'};
-    case 2:
-      return {background: 'url(sprite100.gif) -32px 68px'};
-    case 3:
-      return {background: 'url(sprite100.gif) -48px 68px'};
-    case 4:
-      return {background: 'url(sprite100.gif) -64px 68px'};
-    case 5:
-      return {background: 'url(sprite100.gif) -80px 68px'};
-    case 6:
-      return {background: 'url(sprite100.gif) -96px 68px'};
-    case 7:
-      return {background: 'url(sprite100.gif) -112px 68px'};
-    default:
-      return {background: 'url(sprite100.gif) -128px 68px'};
-  }
-}
-
 export function getGameAttributesByDifficulty(difficulty) {
-  switch(difficulty) {
+  switch (difficulty) {
     case 'beginner':
       return {height: 9, width: 9, mines: 10};
     case 'intermediate':
@@ -34,8 +12,8 @@ export function getGameAttributesByDifficulty(difficulty) {
 }
 
 function generateEmptyPlayground(rows, cols) {
-  let playground = [];
-  for (let i = 0; i < rows; i++) {
+  const playground = [];
+  for (let count = 0; count < rows; count++) {
     playground.push(new Array(cols).fill(1));
   }
 
@@ -44,46 +22,48 @@ function generateEmptyPlayground(rows, cols) {
 
 export function buildPlayground(rows, cols, bombsCellsLookup) {
   const playground = generateEmptyPlayground(rows, cols);
-  let i, j;
+  let row;
+  let col;
 
   Object.keys(bombsCellsLookup).forEach((key) => {
-    i = parseInt(key.split('_')[0]);
-    j = parseInt(key.split('_')[1]);
-    playground[i][j] = -1;
+    row = parseInt(key.split('_')[0], 10);
+    col = parseInt(key.split('_')[1], 10);
+    playground[row][col] = -1;
 
-    if (playground[i-1]) {
-      if (playground[i-1][j] !== -1) {
-        playground[i-1][j]++;
+    // increment all cells around the bomb if it's not another bomb
+    if (playground[row - 1]) {
+      if (playground[row - 1][col] !== -1) {
+        playground[row - 1][col]++;
       }
-      if (playground[i-1][j+1] && playground[i-1][j+1] !== -1 ) {
-        playground[i-1][j+1]++;
+      if (playground[row - 1][col + 1] && playground[row - 1][col + 1] !== -1 ) {
+        playground[row - 1][col + 1]++;
       }
     }
 
-    if (playground[i][j+1]) {
-      if (playground[i][j+1] !== -1) {
-        playground[i][j+1]++;
+    if (playground[row][col + 1]) {
+      if (playground[row][col + 1] !== -1) {
+        playground[row][col + 1]++;
       }
-      if (playground[i+1] && playground[i+1][j+1] !== -1 ) {
-        playground[i+1][j+1]++;
-      }
-    }
-
-    if (playground[i+1]) {
-      if (playground[i+1][j] !== -1) {
-        playground[i+1][j]++;
-      }
-      if (playground[i+1][j-1] && playground[i+1][j-1] !== -1) {
-        playground[i+1][j-1]++;
+      if (playground[row + 1] && playground[row + 1][col + 1] !== -1 ) {
+        playground[row + 1][col + 1]++;
       }
     }
 
-    if (playground[i][j-1]) {
-      if (playground[i][j-1] !== -1) {
-        playground[i][j-1]++;
+    if (playground[row + 1]) {
+      if (playground[row + 1][col] !== -1) {
+        playground[row + 1][col]++;
       }
-      if(playground[i-1] && playground[i-1][j-1] !== -1) {
-        playground[i-1][j-1]++;
+      if (playground[row + 1][col - 1] && playground[row + 1][col - 1] !== -1) {
+        playground[row + 1][col - 1]++;
+      }
+    }
+
+    if (playground[row][col - 1]) {
+      if (playground[row][col - 1] !== -1) {
+        playground[row][col - 1]++;
+      }
+      if (playground[row - 1] && playground[row - 1][col - 1] !== -1) {
+        playground[row - 1][col - 1]++;
       }
     }
   });
@@ -97,14 +77,18 @@ export function expandArea(row, col, playground, revealedCellsLookup, markedCell
       revealedCellsLookup[`${row}_${col}`] = `${row}_${col}`;
     }
     if (playground[row][col] === 1) {
-      if (playground[row-1] && !revealedCellsLookup[`${row-1}_${col}`])
-        expandArea(row-1, col, playground, revealedCellsLookup, markedCellsLookup)
-      if (playground[row][col+1] && !revealedCellsLookup[`${row}_${col+1}`])
-        expandArea(row, col+1, playground, revealedCellsLookup, markedCellsLookup)
-      if (playground[row+1] && !revealedCellsLookup[`${row+1}_${col}`])
-        expandArea(row+1, col, playground, revealedCellsLookup, markedCellsLookup)
-      if (playground[row][col-1] && !revealedCellsLookup[`${row}_${col-1}`])
-        expandArea(row, col-1, playground, revealedCellsLookup, markedCellsLookup)
+      if (playground[row - 1] && !revealedCellsLookup[`${row - 1}_${col}`]) {
+        expandArea(row - 1, col, playground, revealedCellsLookup, markedCellsLookup);
+      }
+      if (playground[row][col + 1] && !revealedCellsLookup[`${row}_${col + 1}`]) {
+        expandArea(row, col + 1, playground, revealedCellsLookup, markedCellsLookup);
+      }
+      if (playground[row + 1] && !revealedCellsLookup[`${row + 1}_${col}`]) {
+        expandArea(row + 1, col, playground, revealedCellsLookup, markedCellsLookup);
+      }
+      if (playground[row][col - 1] && !revealedCellsLookup[`${row}_${col - 1}`]) {
+        expandArea(row, col - 1, playground, revealedCellsLookup, markedCellsLookup);
+      }
     }
   }
 

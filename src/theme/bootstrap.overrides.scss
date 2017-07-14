@@ -70,6 +70,72 @@
 .reset-button {
     width: 26px;
     height: 26px;
-    background: url("../../static/sprite100.gif") 0 36px;
     margin: 0 auto 10px auto;
+}
+
+.reset-button-ok {
+    background: url("../../static/sprite100.gif") 0 36px;
+}
+
+.reset-button-lost {
+    background: url("../../static/sprite100.gif") -78px 36px;
+}
+
+.reset-button-won {
+    background: url("../../static/sprite100.gif") -104px 36px;
+}
+
+.cell-mine {
+    background: url("../../static/sprite100.gif") -64px 52px !important;
+}
+
+.cell-mine-pressed {
+    background: url("../../static/sprite100.gif") -33px 52px !important;
+}
+
+.cell0 {
+    width: 15px;
+    height: 15px;
+    float: left;
+    background: url("../../static/sprite100.gif") 0 52px;
+}
+
+.cell0-revealed {
+    background: url("../../static/sprite100.gif") 0 68px,
+}
+
+.cell1 {
+    background: url("../../static/sprite100.gif") -16px 68px
+}
+
+.cell2 {
+    background: url("../../static/sprite100.gif") -32px 68px
+}
+
+.cell3 {
+    background: url("../../static/sprite100.gif") -48px 68px
+}
+
+.cell4 {
+    background: url("../../static/sprite100.gif") -64px 68px
+}
+
+.cell5 {
+    background: url("../../static/sprite100.gif") -80px 68px
+}
+
+.cell6 {
+    background: url("../../static/sprite100.gif") -96px 68px
+}
+
+.cell7 {
+    background: url("../../static/sprite100.gif") -112px 68px
+}
+
+.cell8 {
+    background: url("../../static/sprite100.gif") -128px 68px
+}
+
+.flag {
+    background: url("../../static/sprite100.gif") -16px 52px,
 }
