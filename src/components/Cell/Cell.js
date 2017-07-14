@@ -2,6 +2,7 @@
 import React, { PropTypes } from 'react';
 import {getBackgroundByNumber} from 'utils/game';
 
+//TODO use classnames instead
 const cellStyles = {
   blank: {
     width: '15px',
@@ -10,7 +11,7 @@ const cellStyles = {
     background: 'url(sprite100.gif) 0 52px',
   },
 
-  bomb: {
+  mine: {
     background: 'url(sprite100.gif) -64px 52px',
   },
 
@@ -29,20 +30,20 @@ const cellStyles = {
 
 export default function Cell(props) {
 
-  const {hasBomb, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, bombsAround, shouldMarkCell, hasMineAndPressed} = props;
+  const {hasMine, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, minesAround, shouldMarkCell, hasMineAndPressed} = props;
   let styles = cellStyles.blank;
 
-  if (isGameOver && hasBomb) {
+  if (isGameOver && hasMine) {
     if (hasMineAndPressed) {
       styles = {...cellStyles.blank, ...cellStyles.pressedMine};
     } else {
-      styles = {...cellStyles.blank, ...cellStyles.bomb};
+      styles = {...cellStyles.blank, ...cellStyles.mine};
     }
   }
 
   if (shouldRevealCell) {
-    if (bombsAround > 0) {
-      styles = {...styles, ...getBackgroundByNumber(bombsAround)};
+    if (minesAround > 0) {
+      styles = {...styles, ...getBackgroundByNumber(minesAround)};
     } else {
       styles = {...styles, ...cellStyles.revealedEmpty};
     }
@@ -53,7 +54,7 @@ export default function Cell(props) {
 
   return (<div
           style={styles}
-          onClick={isGameOver ? null : () => onPlayerClick(row, col, hasBomb) }
+          onClick={isGameOver ? null : () => onPlayerClick(row, col, hasMine) }
           onContextMenu={isGameOver ? null : (event) => { onPlayerMarkCell(event, row, col)}}>
           </div>);
 }
@@ -61,12 +62,12 @@ export default function Cell(props) {
   Cell.propTypes = {
     row: PropTypes.number.isRequired,
     col: PropTypes.number.isRequired,
-    hasBomb: PropTypes.string,
+    hasMine: PropTypes.string,
     hasMineAndPressed: PropTypes.bool.isRequired,
     shouldRevealCell: PropTypes.string,
     shouldMarkCell: PropTypes.string,
     onPlayerClick: PropTypes.func,
     onPlayerMarkCell: PropTypes.func,
     isGameOver: PropTypes.bool.isRequired,
-    bombsAround: PropTypes.number,
+    minesAround: PropTypes.number,
   }

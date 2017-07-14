@@ -16,15 +16,15 @@ export default class Playground extends Component {
   //TODO make more idiomatic react?! (use lifecycle methods)
   initialState(gameAttributes) {
     const {height, width, mines} = gameAttributes;
-    const bombs = this.generateBombs(gameAttributes);
+    const minesLookup = this.generateMines(gameAttributes);
     return {
-      playground: buildPlayground(height, width, bombs),
-      bombsCellsLookup: bombs,
+      playground: buildPlayground(height, width, minesLookup), //two dimensional array representing the board
+      minesCellsLookup: minesLookup,
       revealedCellsLookup: {},
       markedCellsLookup: {},
       isGameOver: false,
       pressedMineCoords: {row: null, col: null},
-      bombsCount: mines,
+      minesCount: mines,
       timer: 0,
       intervalId: null,
       showGameMenu: false,
@@ -36,24 +36,24 @@ export default class Playground extends Component {
     this.setState(this.initialState(this.gameAttributes));
   }
 
-  generateBombs(gameAttributes) {
+  generateMines(gameAttributes) {
     const {height, width, mines} = gameAttributes;
-    let bombs = {};
+    let minesLookup = {};
     let row, col;
-    while (Object.keys(bombs).length < mines) {
+    while (Object.keys(minesLookup).length < mines) {
       row = Math.floor(Math.random() * (height));
       col = Math.floor(Math.random() * (width));
-      bombs[`${row}_${col}`] = `${row}_${col}`;
+      minesLookup[`${row}_${col}`] = `${row}_${col}`;
     }
 
-    return bombs;
+    return minesLookup;
   }
 
-  checkGameStatus(row, col, hasBomb) {
+  checkGameStatus(row, col, hasMine) {
     const {playground, revealedCellsLookup, markedCellsLookup, timer} = this.state;
     let updatedRevealedCells;
 
-    if (hasBomb) {
+    if (hasMine) {
       this.gameOver(false, row, col);
     } else {
       updatedRevealedCells = expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
@@ -92,21 +92,21 @@ export default class Playground extends Component {
   markCell(event, row, col) {
     event.preventDefault();
     const {revealedCellsLookup, markedCellsLookup} = this.state;
-    let {bombsCount} = this.state;
+    let {minesCount} = this.state;
 
     if (!revealedCellsLookup[`${row}_${col}`]) {
       if (markedCellsLookup[`${row}_${col}`]) {
         markedCellsLookup[`${row}_${col}`] = null;
-        bombsCount++;
+        minesCount++;
       } else {
         markedCellsLookup[`${row}_${col}`] = `${row}_${col}`;
-        bombsCount--;
+        minesCount--;
       }
 
       if (this.checkIfWon(revealedCellsLookup, markedCellsLookup)) {
         this.gameOver(true);
       } else {
-        this.setState({bombsCount, markedCellsLookup});
+        this.setState({minesCount, markedCellsLookup});
       }
     }
   }
@@ -137,7 +137,7 @@ export default class Playground extends Component {
   }
 
   render() {
-    const {bombsCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, bombsCount, timer, showGameMenu, pressedMineCoords} = this.state;
+    const {minesCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, minesCount, timer, showGameMenu, pressedMineCoords} = this.state;
 
     //TODO work on this part of code!
     const rows = [];
@@ -149,8 +149,8 @@ export default class Playground extends Component {
                   col={col}
                   onPlayerClick={this.checkGameStatus.bind(this)}
                   onPlayerMarkCell={this.markCell.bind(this)}
-                  hasBomb={bombsCellsLookup[`${row}_${col}`]}
-                  bombsAround={playground && playground[row][col] > 0 && playground[row][col] -1}
+                  hasMine={minesCellsLookup[`${row}_${col}`]}
+                  minesAround={playground && playground[row][col] > 0 && playground[row][col] -1}
                   hasMineAndPressed={pressedMineCoords.row === row && pressedMineCoords.col === col}
                   shouldRevealCell={revealedCellsLookup[`${row}_${col}`]}
                   shouldMarkCell={markedCellsLookup[`${row}_${col}`]}
@@ -171,7 +171,7 @@ export default class Playground extends Component {
         <div className="minesweeper-body">
           <Helmet title="Minesweeper Online" />
           <div className="row">
-            <h1 className="col-xs-6">Mines: {bombsCount}</h1>
+            <h1 className="col-xs-6">Mines: {minesCount}</h1>
             <h1 className="col-xs-6">Timer: {timer}</h1>
           </div>
           <div><a className="pointer" onClick={this.openGameMenu}>Game</a></div>
