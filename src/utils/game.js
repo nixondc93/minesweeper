@@ -16,8 +16,6 @@ function generateEmptyPlayground(rows, cols) {
     playground.push(new Array(cols).fill(1));
   }
 
-  console.log(playground);
-  console.log(playground.toString());
   return playground;
 }
 

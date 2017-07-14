@@ -87,10 +87,19 @@ export default class Playground extends Component {
 
   markCell(event, row, col) {
     event.preventDefault();
-    const {revealedCellsLookup, markedCellsLookup, bombsCount} = this.state;
+    const {revealedCellsLookup, markedCellsLookup} = this.state;
+    let {bombsCount} = this.state;
+
     if (!revealedCellsLookup[`${row}_${col}`]) {
-      markedCellsLookup[`${row}_${col}`] = markedCellsLookup[`${row}_${col}`] ? null : `${row}_${col}`;
-      this.setState({bombsCount: bombsCount-1, markedCellsLookup: markedCellsLookup});
+      if (markedCellsLookup[`${row}_${col}`]) {
+        markedCellsLookup[`${row}_${col}`] = null;
+        bombsCount++;
+      } else {
+        markedCellsLookup[`${row}_${col}`] = `${row}_${col}`;
+        bombsCount--;
+      }
+
+      this.setState({bombsCount, markedCellsLookup});
     }
   }
 
