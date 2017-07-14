@@ -131,6 +131,7 @@ export default class Playground extends Component {
 
   handleApplySettings(gameAttributes) {
     this.gameAttributes = gameAttributes;
+    console.log('value of `gameAttributes`', gameAttributes);
     this.resetGame();
   }
 

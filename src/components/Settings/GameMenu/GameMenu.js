@@ -5,9 +5,15 @@ import {getGameAttributesByDifficulty} from 'utils/game';
 export default function GameMenu(props) {
   const {handleApplySettings, handleExitMenu, gameAttributes} = props;
 
-  const beginnerAttributes = getGameAttributesByDifficulty('beginner');
-  const intermediateAttributes = getGameAttributesByDifficulty('intermediate');
-  const expertAttributes = getGameAttributesByDifficulty('expert');
+  const defaultBeginnerAttributes = getGameAttributesByDifficulty('beginner');
+  const defaultIntermediateAttributes = getGameAttributesByDifficulty('intermediate');
+  const defaultExpertAttributes = getGameAttributesByDifficulty('expert');
+  const defaultCustomAttributes = getGameAttributesByDifficulty('custom');
+
+  const isBeginnerSelected = gameAttributes.mines === defaultBeginnerAttributes.mines;
+  const isIntermediateSelected = gameAttributes.mines === defaultIntermediateAttributes.mines;
+  const isExpertSelected = gameAttributes.mines === defaultExpertAttributes.mines;
+  const isCustomSelected = !isBeginnerSelected && !isIntermediateSelected && !isExpertSelected;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,11 +21,23 @@ export default function GameMenu(props) {
     const difficulty = form.elements['difficulty'].value;
 
     if (difficulty === 'custom') {
-      handleApplySettings(getGameAttributesByDifficulty({
-        height: form.elements["custom-height"].value,
-        width: form.elements["custom-width"].value,
-        mines: form.elements["custom-mines"].value,
-      }));
+      if (parseInt(form.elements["custom-height"].value) && parseInt(form.elements["custom-width"].value) &&  parseInt(form.elements["custom-mines"].value)) {
+        if (parseInt(form.elements["custom-height"].value) * parseInt(form.elements["custom-width"].value) <= parseInt(form.elements["custom-mines"].value)) {
+          handleApplySettings({
+            height: parseInt(form.elements["custom-height"].value),
+            width: parseInt(form.elements["custom-width"].value),
+            mines: (parseInt(form.elements["custom-height"].value) * parseInt(form.elements["custom-width"].value) - 1),
+          });
+        } else {
+          handleApplySettings({
+            height: parseInt(form.elements["custom-height"].value),
+            width: parseInt(form.elements["custom-width"].value),
+            mines: parseInt(form.elements["custom-mines"].value),
+          });
+        }
+      } else {
+        handleApplySettings(defaultCustomAttributes);
+      }
     } else {
       handleApplySettings(getGameAttributesByDifficulty(difficulty));
     }
@@ -47,49 +65,49 @@ export default function GameMenu(props) {
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="beginner" defaultChecked={gameAttributes.mines === beginnerAttributes.mines} />
+            <input name="difficulty" className="col-xs-3" type="radio" value="beginner" defaultChecked={isBeginnerSelected} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Beginner</strong>
           </div>
           <div className="row col-xs-7 padding0">
-            <div className="col-xs-4">{beginnerAttributes.height}</div>
-            <div className="col-xs-4">{beginnerAttributes.width}</div>
-            <div className="col-xs-4">{beginnerAttributes.mines}</div>
+            <div className="col-xs-4">{defaultBeginnerAttributes.height}</div>
+            <div className="col-xs-4">{defaultBeginnerAttributes.width}</div>
+            <div className="col-xs-4">{defaultBeginnerAttributes.mines}</div>
           </div>
         </div>
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="intermediate" defaultChecked={gameAttributes.mines === intermediateAttributes.mines} />
+            <input name="difficulty" className="col-xs-3" type="radio" value="intermediate" defaultChecked={isIntermediateSelected} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Intermediate</strong>
           </div>
           <div className="row col-xs-7 padding0">
-            <div className="col-xs-4">{intermediateAttributes.height}</div>
-            <div className="col-xs-4">{intermediateAttributes.width}</div>
-            <div className="col-xs-4">{intermediateAttributes.mines}</div>
+            <div className="col-xs-4">{defaultIntermediateAttributes.height}</div>
+            <div className="col-xs-4">{defaultIntermediateAttributes.width}</div>
+            <div className="col-xs-4">{defaultIntermediateAttributes.mines}</div>
           </div>
         </div>
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="expert" defaultChecked={gameAttributes.mines === expertAttributes.mines} />
+            <input name="difficulty" className="col-xs-3" type="radio" value="expert" defaultChecked={isExpertSelected} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Expert</strong>
           </div>
           <div className="row col-xs-7 padding0">
-            <div className="col-xs-4">{expertAttributes.height}</div>
-            <div className="col-xs-4">{expertAttributes.width}</div>
-            <div className="col-xs-4">{expertAttributes.mines}</div>
+            <div className="col-xs-4">{defaultExpertAttributes.height}</div>
+            <div className="col-xs-4">{defaultExpertAttributes.width}</div>
+            <div className="col-xs-4">{defaultExpertAttributes.mines}</div>
           </div>
         </div>
 
         <div className="row pointer">
           <div className="col-xs-5">
-            <input name="difficulty" className="col-xs-3" type="radio" value="custom" />
+            <input name="difficulty" className="col-xs-3" type="radio" value="custom" defaultChecked={isCustomSelected} />
             <strong className="col-xs-9 padding0 fs-small ta-left">Custom</strong>
           </div>
           <div className="row col-xs-7 padding0">
-            <input name="custom-height" className="col-xs-4 padding0" type="text" />
-            <input name="custom-width" className="col-xs-4 padding0" type="text" />
-            <input name="custom-mines" className="col-xs-4 padding0" type="text" />
+            <input name="custom-height" className="col-xs-4 padding0" type="text" placeholder={isCustomSelected && gameAttributes.height || defaultCustomAttributes.height} />
+            <input name="custom-width" className="col-xs-4 padding0" type="text" placeholder={isCustomSelected && gameAttributes.width || defaultCustomAttributes.width} />
+            <input name="custom-mines" className="col-xs-4 padding0" type="text" placeholder={isCustomSelected && gameAttributes.mines || defaultCustomAttributes.mines} />
           </div>
         </div>
 

@@ -5,8 +5,10 @@ export function getGameAttributesByDifficulty(difficulty) {
       return {height: 9, width: 9, mines: 10};
     case 'intermediate':
       return {height: 16, width: 16, mines: 40};
-    default:
+    case 'expert':
       return {height: 16, width: 30, mines: 99};
+    default:
+      return {height: 20, width: 30, mines: 145};
   }
 }
 
