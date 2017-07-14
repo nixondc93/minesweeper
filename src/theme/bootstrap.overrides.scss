@@ -15,6 +15,54 @@
   background-color: transparent;
 }
 
+.minesweeper-body {
+    text-align: center;
+}
+
+.main-grid {
+    position: relative;
+    margin: 0 auto;
+}
+
+.game-menu {
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 10px;
+    height: 146px;
+    width: 250px;
+    background: white;
+    border: 1px solid black;
+}
+
+.menu-header {
+    color: white;
+    background: #0066ff;
+}
+
+.attr-header {
+    background: #dddddd;
+}
+
+.pt2 {
+    padding-top: 2px;
+}
+
+.padding0 {
+    padding: 0;
+}
+
+.padding2 {
+    padding: 2px;
+}
+
+.fs-small {
+    font-size: 12px;
+}
+
+.ta-left {
+    text-align: left !important;
+}
+
 .pointer {
     cursor: pointer;
 }

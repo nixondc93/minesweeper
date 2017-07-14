@@ -26,7 +26,6 @@ const cellStyles = {
   }
 };
 
-//TODO make it functional component
 export default function Cell(props) {
 
   const {hasBomb, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, bombsAround, shouldMarkCell} = props;

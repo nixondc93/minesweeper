@@ -1,4 +1,15 @@
 /*eslint-disable*/
+export function getGameAttributesByDifficulty(difficulty) {
+  switch(difficulty) {
+    case 'beginner':
+      return {height: 9, width: 9, mines: 10};
+    case 'intermediate':
+      return {height: 16, width: 16, mines: 40};
+    default:
+      return {height: 16, width: 30, mines: 99};
+  }
+}
+
 function generateEmptyPlayground(rows, cols) {
   let playground = [];
   for (let i = 0; i < rows; i++) {
