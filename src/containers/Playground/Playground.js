@@ -8,7 +8,6 @@ export default class Playground extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = this.initialState(getGameAttributesByDifficulty('expert'));
 
     this.gameAttributes = getGameAttributesByDifficulty('expert');
@@ -116,6 +115,10 @@ export default class Playground extends Component {
     this.setState({showGameMenu: true});
   }
 
+  closeGameMenu = () => {
+    this.setState({showGameMenu: false});
+  }
+
   handleApplySettings(gameAttributes) {
     this.gameAttributes = gameAttributes;
     this.resetGame();
@@ -144,12 +147,13 @@ export default class Playground extends Component {
                   />);
       }
     }
-    //////////////////////////
+
+    //15px is the width of each cell
     const gridWidth = this.gameAttributes.width * 15;
     const mainGrid = (
         <div className="main-grid" style={{width: `${gridWidth}px`}}>
           {rows}
-          {showGameMenu && <GameMenu handleApplySettings={this.handleApplySettings.bind(this)}/>}
+          {showGameMenu && <GameMenu handleApplySettings={this.handleApplySettings.bind(this)} handleExitMenu={this.closeGameMenu.bind(this)}/>}
         </div>);
 
     return (

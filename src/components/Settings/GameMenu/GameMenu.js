@@ -3,7 +3,7 @@ import React, {PropTypes} from 'react';
 import {getGameAttributesByDifficulty} from 'utils/game';
 
 export default function GameMenu(props) {
-  const {handleApplySettings} = props;
+  const {handleApplySettings, handleExitMenu} = props;
 
   const beginnerAttributes = getGameAttributesByDifficulty('beginner');
   const intermediateAttributes = getGameAttributesByDifficulty('intermediate');
@@ -30,7 +30,7 @@ export default function GameMenu(props) {
       <form id="game-menu" onSubmit={(e) => handleSubmit(e)}>
       <div className="row menu-header">
         <div className="col-xs-6"><span className="pull-left">Game</span></div>
-        <div className="col-xs-6 pt2"><span className="fa fa-times pull-right pointer"></span></div>
+        <div className="col-xs-6 pt2" onClick={() => handleExitMenu()}><span className="fa fa-times pull-right pointer"></span></div>
       </div>
       <div>
       </div>
@@ -104,4 +104,5 @@ export default function GameMenu(props) {
 
 GameMenu.propTypes = {
   handleApplySettings: PropTypes.func.isRequired,
+  handleExitMenu: PropTypes.func.isRequired,
 }
