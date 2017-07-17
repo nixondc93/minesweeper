@@ -29,7 +29,7 @@ export default function Cell(props) {
 Cell.propTypes = {
   row: PropTypes.number.isRequired,
   col: PropTypes.number.isRequired,
-  hasMine: PropTypes.string,
+  hasMine: PropTypes.bool,
   hasMineAndPressed: PropTypes.bool.isRequired,
   shouldRevealCell: PropTypes.string,
   shouldMarkCell: PropTypes.string,

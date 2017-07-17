@@ -34,27 +34,10 @@ export default class Playground extends Component {
     }
   }
 
-  generateMines(gameAttributes) {
-    const {height, width, mines} = gameAttributes;
-    const minesLookup = {};
-    let row;
-    let col;
-
-    while (Object.keys(minesLookup).length < mines) {
-      row = Math.floor(Math.random() * (height));
-      col = Math.floor(Math.random() * (width));
-      minesLookup[`${row}_${col}`] = `${row}_${col}`;
-    }
-
-    return minesLookup;
-  }
-
   initialState(gameAttributes) {
     const {height, width, mines} = gameAttributes;
-    const minesLookup = this.generateMines(gameAttributes);
     return {
-      playground: buildPlayground(height, width, minesLookup), // two dimensional array representing the board
-      minesCellsLookup: minesLookup,
+      playground: buildPlayground(height, width, mines), // two dimensional array representing the board
       revealedCellsLookup: {},
       markedCellsLookup: {},
       isGameOver: false,
@@ -129,7 +112,7 @@ export default class Playground extends Component {
   }
 
   render() {
-    const {minesCellsLookup, revealedCellsLookup, markedCellsLookup, playground, isGameOver, minesCount, timer, showGameMenu, pressedMineCoords} = this.state;
+    const {revealedCellsLookup, markedCellsLookup, playground, isGameOver, minesCount, timer, showGameMenu, pressedMineCoords} = this.state;
 
     const rows = [];
     for (let row = 0; row < this.gameAttributes.height; row++) {
@@ -140,8 +123,8 @@ export default class Playground extends Component {
                   col={col}
                   onPlayerClick={this.onPlayerClick.bind(this)}
                   onPlayerMarkCell={this.markCell.bind(this)}
-                  hasMine={minesCellsLookup[`${row}_${col}`]}
-                  minesAround={playground && playground[row][col] > 0 && playground[row][col] - 1}
+                  hasMine={playground[row][col] === -1}
+                  minesAround={playground && playground[row][col] >= 0 && playground[row][col]}
                   hasMineAndPressed={pressedMineCoords.row === row && pressedMineCoords.col === col}
                   shouldRevealCell={revealedCellsLookup[`${row}_${col}`]}
                   shouldMarkCell={markedCellsLookup[`${row}_${col}`]}
