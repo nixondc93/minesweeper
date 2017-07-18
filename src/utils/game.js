@@ -74,7 +74,7 @@ export function buildPlayground(height, width, numberOfMines) {
 export function expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup) {
   if (!markedCellsLookup[`${row}_${col}`]) {
     if (playground[row][col] >= 0) {
-      revealedCellsLookup[`${row}_${col}`] = `${row}_${col}`;
+      revealedCellsLookup[`${row}_${col}`] = true;
     }
     if (playground[row][col] === 0) {
       deltas.forEach((delta) => {

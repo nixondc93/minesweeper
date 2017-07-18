@@ -18,13 +18,13 @@ export default class Playground extends Component {
     const revealedCellsLookup = Object.assign({}, this.state.revealedCellsLookup);
 
     if (hasMine) {
-      this.gameOver(false, row, col);
+      this.gameOver(revealedCellsLookup, row, col);
     } else {
       // value of revealedCellsLookup is changed inside of expandArea function as it's passed as a reference
       expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
 
       if (this.checkIfWinningCombination(revealedCellsLookup, markedCellsLookup)) {
-        this.gameOver(true);
+        this.gameOver(revealedCellsLookup);
       } else {
         this.setState({revealedCellsLookup});
       }
@@ -84,20 +84,20 @@ export default class Playground extends Component {
         markedCellsLookup[`${row}_${col}`] = null;
         minesCount++;
       } else {
-        markedCellsLookup[`${row}_${col}`] = `${row}_${col}`;
+        markedCellsLookup[`${row}_${col}`] = true;
         minesCount--;
       }
 
       if (this.checkIfWinningCombination(revealedCellsLookup, markedCellsLookup)) {
-        this.gameOver(true);
+        this.gameOver(revealedCellsLookup);
       } else {
         this.setState({minesCount, markedCellsLookup});
       }
     }
   }
 
-  gameOver(isVictory = false, row = null, col = null) {
-    this.setState({isGameOver: true, pressedMineCoords: {row: row, col: col}});
+  gameOver(revealedCellsLookup, row = null, col = null) {
+    this.setState({isGameOver: true, pressedMineCoords: {row: row, col: col}, revealedCellsLookup});
   }
 
   openGameMenu = () => {
