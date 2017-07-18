@@ -81,7 +81,7 @@ export default class Playground extends Component {
 
     if (!revealedCellsLookup[`${row}_${col}`]) {
       if (markedCellsLookup[`${row}_${col}`]) {
-        markedCellsLookup[`${row}_${col}`] = null;
+        delete markedCellsLookup[`${row}_${col}`];
         minesCount++;
       } else {
         markedCellsLookup[`${row}_${col}`] = true;
