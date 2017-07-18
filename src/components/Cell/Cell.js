@@ -7,6 +7,7 @@ export default function Cell(props) {
   const cellClasses = classnames('cell0', {
     'cell-mine': isGameOver && hasMine && !hasMineAndPressed,
     'cell-mine-pressed': isGameOver && hasMine && hasMineAndPressed,
+    'cell-mine-wrong-marked': isGameOver && !hasMine && shouldMarkCell,
     'cell0-revealed': !minesAround && shouldRevealCell,
     'cell1': minesAround === 1 && shouldRevealCell,
     'cell2': minesAround === 2 && shouldRevealCell,

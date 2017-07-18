@@ -97,7 +97,7 @@ export default class Playground extends Component {
   }
 
   gameOver(revealedCellsLookup, row = null, col = null) {
-    this.setState({isGameOver: true, pressedMineCoords: {row: row, col: col}, revealedCellsLookup});
+    this.setState({isGameOver: true, pressedMineCoords: {row, col}, revealedCellsLookup});
   }
 
   openGameMenu = () => {
