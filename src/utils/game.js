@@ -1,14 +1,4 @@
-/* eslint-disable no-loop-func */
-const deltas = [
-  {row: -1, col: 0}, // top
-  {row: -1, col: 1},
-  {row: 0, col: 1}, // right
-  {row: 1, col: 1},
-  {row: 1, col: 0}, // bottom
-  {row: 1, col: -1},
-  {row: 0, col: -1}, // left
-  {row: -1, col: -1}
-];
+import {shuffle} from 'lodash';
 
 export function getGameAttributesByDifficulty(difficulty) {
   switch (difficulty) {
@@ -23,47 +13,31 @@ export function getGameAttributesByDifficulty(difficulty) {
   }
 }
 
-function generateEmptyPlayground(rows, cols) {
-  const playground = [];
-  for (let count = 0; count < rows; count++) {
-    playground.push(new Array(cols).fill(0));
-  }
-
-  return playground;
-}
-
-function isValidCell(row, col, playground, revealedCellsLookup = null) {
-  if (playground[row] && playground[row][col] >= 0) {
-    return !revealedCellsLookup || !revealedCellsLookup[`${row}_${col}`];
-  }
-
-  return false;
+function isCellAround(indx, currIndx, height, width, playground, revealedCellsLookup = null) {
+  return indx >= 0 &&
+         indx < width * height &&
+         indx !== currIndx && playground[indx] >= 0 &&
+         (!revealedCellsLookup || !revealedCellsLookup[indx]) &&
+         Math.abs(Math.floor(indx / width) - Math.floor(currIndx / width)) <= 1 &&
+         Math.abs(indx % width - currIndx % width) <= 1;
 }
 
 export function buildPlayground(height, width, numberOfMines) {
-  const playground = generateEmptyPlayground(height, width);
-  const cells = Array.from(Array(height * width).keys()); // array with elements from 0 to height * width (number of cells) to generate random mines without repetitions
+  const playground = new Array(height * width).fill(0);
+  const cells = shuffle(Array.from(Array(height * width).keys())); // array with elements from 0 to height * width (number of cells) to generate random mines without repetitions
   let cell;
-  let index;
-  let row;
-  let col;
   let minesPlaced = 0;
 
   while (minesPlaced < numberOfMines) {
-    index = Math.floor(Math.random() * (cells.length - 1));
-    cell = cells[index];
-    row = Math.floor(cell / width);
-    col = cell % width;
+    cell = cells[minesPlaced];
 
-    cells.splice(index, 1);
+    playground[cell] = -1;
 
-    playground[row][col] = -1;
-
-    deltas.forEach((delta) => {
-      if (isValidCell(row + delta.row, col + delta.col, playground)) {
-        playground[row + delta.row][col + delta.col]++;
+    for (let indx = cell - width - 1; indx <= cell + width + 1; indx++) {
+      if (isCellAround(indx, cell, height, width, playground)) {
+        playground[indx]++;
       }
-    });
+    }
 
     minesPlaced++;
   }
@@ -71,17 +45,17 @@ export function buildPlayground(height, width, numberOfMines) {
   return playground;
 }
 
-export function expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup) {
-  if (!markedCellsLookup[`${row}_${col}`]) {
-    if (playground[row][col] >= 0) {
-      revealedCellsLookup[`${row}_${col}`] = true;
+export function expandArea(currIndx, playground, height, width, revealedCellsLookup, markedCellsLookup) {
+  if (!markedCellsLookup[currIndx]) {
+    if (playground[currIndx] >= 0) {
+      revealedCellsLookup[currIndx] = true;
     }
-    if (playground[row][col] === 0) {
-      deltas.forEach((delta) => {
-        if (isValidCell(row + delta.row, col + delta.col, playground, revealedCellsLookup)) {
-          expandArea(row + delta.row, col + delta.col, playground, revealedCellsLookup, markedCellsLookup);
+    if (playground[currIndx] === 0) {
+      for (let indx = currIndx - width - 1; indx < currIndx + width + 1; indx++) {
+        if (isCellAround(indx, currIndx, height, width, playground, revealedCellsLookup)) {
+          expandArea(indx, playground, height, width, revealedCellsLookup, markedCellsLookup);
         }
-      });
+      }
     }
   }
 

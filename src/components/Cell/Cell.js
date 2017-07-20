@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 
 export default function Cell(props) {
-  const {hasMine, row, col, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, minesAround, shouldMarkCell, hasMineAndPressed} = props;
+  const {hasMine, indx, onPlayerClick, onPlayerMarkCell, isGameOver, shouldRevealCell, minesAround, shouldMarkCell, hasMineAndPressed} = props;
 
   const cellClasses = classnames('cell0', {
     'cell-mine': isGameOver && hasMine && !hasMineAndPressed,
@@ -22,14 +22,13 @@ export default function Cell(props) {
 
   return (<div
           className={cellClasses}
-          onClick={isGameOver ? null : () => onPlayerClick(row, col, hasMine) }
-          onContextMenu={isGameOver ? null : (event) => { onPlayerMarkCell(event, row, col);}}>
+          onClick={isGameOver ? null : () => onPlayerClick(indx, hasMine) }
+          onContextMenu={isGameOver ? null : (event) => { onPlayerMarkCell(event, indx);}}>
           </div>);
 }
 
 Cell.propTypes = {
-  row: PropTypes.number.isRequired,
-  col: PropTypes.number.isRequired,
+  indx: PropTypes.number.isRequired,
   hasMine: PropTypes.bool,
   hasMineAndPressed: PropTypes.bool.isRequired,
   shouldRevealCell: PropTypes.bool,

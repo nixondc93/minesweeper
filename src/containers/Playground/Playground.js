@@ -13,15 +13,15 @@ export default class Playground extends Component {
     this.gameAttributes = getGameAttributesByDifficulty('expert');
   }
 
-  onPlayerClick(row, col, hasMine) {
+  onPlayerClick(indx, hasMine) {
     const {playground, markedCellsLookup, timer} = this.state;
     const revealedCellsLookup = Object.assign({}, this.state.revealedCellsLookup);
 
     if (hasMine) {
-      this.gameOver(revealedCellsLookup, row, col);
+      this.gameOver(revealedCellsLookup, indx);
     } else {
       // value of revealedCellsLookup is changed inside of expandArea function as it's passed as a reference
-      expandArea(row, col, playground, revealedCellsLookup, markedCellsLookup);
+      expandArea(indx, playground, this.gameAttributes.height, this.gameAttributes.width, revealedCellsLookup, markedCellsLookup);
 
       if (this.checkIfWinningCombination(revealedCellsLookup, markedCellsLookup)) {
         this.gameOver(revealedCellsLookup);
@@ -38,11 +38,11 @@ export default class Playground extends Component {
   initialState(gameAttributes) {
     const {height, width, mines} = gameAttributes;
     return {
-      playground: buildPlayground(height, width, mines), // two dimensional array representing the board
+      playground: buildPlayground(height, width, mines),
       revealedCellsLookup: {},
       markedCellsLookup: {},
       isGameOver: false,
-      pressedMineCoords: {row: null, col: null},
+      pressedMineIndx: null,
       minesCount: mines,
       timer: 0,
       intervalId: null,
@@ -73,18 +73,18 @@ export default class Playground extends Component {
     }
   }
 
-  markCell(event, row, col) {
+  markCell(event, indx) {
     event.preventDefault();
     const {revealedCellsLookup} = this.state;
     const markedCellsLookup = Object.assign({}, this.state.markedCellsLookup);
     let {minesCount} = this.state;
 
-    if (!revealedCellsLookup[`${row}_${col}`]) {
-      if (markedCellsLookup[`${row}_${col}`]) {
-        delete markedCellsLookup[`${row}_${col}`];
+    if (!revealedCellsLookup[indx]) {
+      if (markedCellsLookup[indx]) {
+        delete markedCellsLookup[indx];
         minesCount++;
       } else if (minesCount > 0) {
-        markedCellsLookup[`${row}_${col}`] = true;
+        markedCellsLookup[indx] = true;
         minesCount--;
       }
 
@@ -96,8 +96,8 @@ export default class Playground extends Component {
     }
   }
 
-  gameOver(revealedCellsLookup, row = null, col = null) {
-    this.setState({isGameOver: true, pressedMineCoords: {row, col}, revealedCellsLookup});
+  gameOver(revealedCellsLookup, indx = null) {
+    this.setState({isGameOver: true, pressedMineIndx: indx, revealedCellsLookup});
   }
 
   openGameMenu = () => {
@@ -114,25 +114,22 @@ export default class Playground extends Component {
   }
 
   render() {
-    const {revealedCellsLookup, markedCellsLookup, playground, isGameOver, minesCount, timer, showGameMenu, pressedMineCoords} = this.state;
+    const {revealedCellsLookup, markedCellsLookup, playground, isGameOver, minesCount, timer, showGameMenu, pressedMineIndx} = this.state;
 
     const rows = [];
-    for (let row = 0; row < this.gameAttributes.height; row++) {
-      for (let col = 0; col < this.gameAttributes.width; col++) {
-        rows.push(<Cell
-                  key={`${row}_${col}`}
-                  row={row}
-                  col={col}
-                  onPlayerClick={this.onPlayerClick.bind(this)}
-                  onPlayerMarkCell={this.markCell.bind(this)}
-                  hasMine={playground[row][col] === -1}
-                  minesAround={playground && playground[row][col] >= 0 && playground[row][col]}
-                  hasMineAndPressed={pressedMineCoords.row === row && pressedMineCoords.col === col}
-                  shouldRevealCell={revealedCellsLookup[`${row}_${col}`]}
-                  shouldMarkCell={markedCellsLookup[`${row}_${col}`]}
-                  isGameOver={isGameOver}
-                  />);
-      }
+    for (let indx = 0; indx < this.gameAttributes.height * this.gameAttributes.width; indx++) {
+      rows.push(<Cell
+                key={`${indx}`}
+                indx={indx}
+                onPlayerClick={this.onPlayerClick.bind(this)}
+                onPlayerMarkCell={this.markCell.bind(this)}
+                hasMine={playground[indx] === -1}
+                minesAround={playground[indx] >= 0 && playground[indx]}
+                hasMineAndPressed={pressedMineIndx === indx}
+                shouldRevealCell={revealedCellsLookup[indx]}
+                shouldMarkCell={markedCellsLookup[indx]}
+                isGameOver={isGameOver}
+                />);
     }
 
     // 15px is the width of each cell
@@ -145,8 +142,8 @@ export default class Playground extends Component {
 
     const resetButtonCl = classnames('reset-button', 'pointer', {
       'reset-button-ok': !isGameOver,
-      'reset-button-lost': isGameOver && pressedMineCoords.row !== null,
-      'reset-button-won': isGameOver && pressedMineCoords.row === null
+      'reset-button-lost': isGameOver && pressedMineIndx !== null,
+      'reset-button-won': isGameOver && pressedMineIndx === null
     });
 
     return (
